@@ -49,13 +49,21 @@ sudo sysctl --system
 sudo apt-get update -y
 apt-get install -y software-properties-common curl apt-transport-https ca-certificates
 
-curl -fsSL https://pkgs.k8s.io/addons:/cri-o:/prerelease:/main/deb/Release.key |
-    gpg --dearmor -o /etc/apt/keyrings/cri-o-apt-keyring.gpg
-echo "deb [signed-by=/etc/apt/keyrings/cri-o-apt-keyring.gpg] https://pkgs.k8s.io/addons:/cri-o:/prerelease:/main/deb/ /" |
-    tee /etc/apt/sources.list.d/cri-o.list
+# sudo chmod 755 /vagrant/packages/cri-o_1.30.2-1_amd64.deb
+# sudo apt-get install -y /vagrant/packages/cri-o_1.30.2-1_amd64.deb
 
-sudo apt-get update -y
-sudo apt-get install -y cri-o
+curl https://raw.githubusercontent.com/cri-o/packaging/main/get | bash
+
+# curl -fsSL https://pkgs.k8s.io/addons:/cri-o:/prerelease:/main/deb/Release.key |
+#     gpg --dearmor -o /etc/apt/keyrings/cri-o-apt-keyring.gpg
+# echo "deb [signed-by=/etc/apt/keyrings/cri-o-apt-keyring.gpg] https://pkgs.k8s.io/addons:/cri-o:/prerelease:/main/deb/ /" |
+#     tee /etc/apt/sources.list.d/cri-o.list
+
+# echo "deb http://download.opensuse.org/repositories/home:/kubeinit/$OS/ /" | sudo tee /etc/apt/sources.list.d/home:kubeinit.list
+# curl -fsSL https://download.opensuse.org/repositories/home:kubeinit/$OS/Release.key | gpg --dearmor | sudo tee /etc/apt/trusted.gpg.d/home_kubeinit.gpg > /dev/null
+
+# sudo apt-get update -y
+# sudo apt-get install -y cri-o
 
 sudo systemctl daemon-reload
 sudo systemctl enable crio --now
@@ -67,7 +75,6 @@ sudo mkdir -p /etc/apt/keyrings
 curl -fsSL https://pkgs.k8s.io/core:/stable:/v$KUBERNETES_VERSION_SHORT/deb/Release.key | sudo gpg --dearmor -o /etc/apt/keyrings/kubernetes-apt-keyring.gpg
 echo "deb [signed-by=/etc/apt/keyrings/kubernetes-apt-keyring.gpg] https://pkgs.k8s.io/core:/stable:/v$KUBERNETES_VERSION_SHORT/deb/ /" | sudo tee /etc/apt/sources.list.d/kubernetes.list
 
-
 sudo apt-get update -y
 sudo apt-get install -y kubelet="$KUBERNETES_VERSION" kubectl="$KUBERNETES_VERSION" kubeadm="$KUBERNETES_VERSION"
 sudo apt-get update -y
@@ -75,7 +82,6 @@ sudo apt-get install -y jq
 
 # Disable auto-update services
 sudo apt-mark hold kubelet kubectl kubeadm cri-o
-
 
 local_ip="$(ip --json a s | jq -r '.[] | if .ifname == "eth1" then .addr_info[] | if .family == "inet" then .local else empty end else empty end')"
 cat > /etc/default/kubelet << EOF
