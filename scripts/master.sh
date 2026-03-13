@@ -36,7 +36,7 @@ kubeadm token create --print-join-command > $config_path/join.sh
 
 # Install Calico Network Plugin
 
-curl https://raw.githubusercontent.com/projectcalico/calico/v${CALICO_VERSION}/manifests/calico.yaml -O
+curl https://raw.githubusercontent.com/projectcalico/calico/${CALICO_VERSION}/manifests/calico.yaml -O
 
 kubectl apply -f calico.yaml
 
@@ -50,4 +50,3 @@ EOF
 # Install Metrics Server
 
 kubectl apply -f https://raw.githubusercontent.com/techiescamp/kubeadm-scripts/main/manifests/metrics-server.yaml
-

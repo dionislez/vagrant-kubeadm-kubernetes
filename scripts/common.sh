@@ -24,7 +24,6 @@ sudo swapoff -a
 (crontab -l 2>/dev/null; echo "@reboot /sbin/swapoff -a") | crontab - || true
 sudo apt-get update -y
 
-
 # Create the .conf file to load the modules at bootup
 cat <<EOF | sudo tee /etc/modules-load.d/k8s.conf
 overlay
@@ -47,41 +46,27 @@ sudo sysctl --system
 ## Install CRIO Runtime
 
 sudo apt-get update -y
-apt-get install -y software-properties-common curl apt-transport-https ca-certificates
-
-# sudo chmod 755 /vagrant/packages/cri-o_1.30.2-1_amd64.deb
-# sudo apt-get install -y /vagrant/packages/cri-o_1.30.2-1_amd64.deb
+apt-get install -y software-properties-common curl apt-transport-https ca-certificates jq
 
 curl https://raw.githubusercontent.com/cri-o/packaging/main/get | bash
-
-# curl -fsSL https://pkgs.k8s.io/addons:/cri-o:/prerelease:/main/deb/Release.key |
-#     gpg --dearmor -o /etc/apt/keyrings/cri-o-apt-keyring.gpg
-# echo "deb [signed-by=/etc/apt/keyrings/cri-o-apt-keyring.gpg] https://pkgs.k8s.io/addons:/cri-o:/prerelease:/main/deb/ /" |
-#     tee /etc/apt/sources.list.d/cri-o.list
-
-# echo "deb http://download.opensuse.org/repositories/home:/kubeinit/$OS/ /" | sudo tee /etc/apt/sources.list.d/home:kubeinit.list
-# curl -fsSL https://download.opensuse.org/repositories/home:kubeinit/$OS/Release.key | gpg --dearmor | sudo tee /etc/apt/trusted.gpg.d/home_kubeinit.gpg > /dev/null
-
-# sudo apt-get update -y
-# sudo apt-get install -y cri-o
-
 sudo systemctl daemon-reload
 sudo systemctl enable crio --now
 sudo systemctl start crio.service
 
 echo "CRI runtime installed successfully"
 
-sudo mkdir -p /etc/apt/keyrings
-curl -fsSL https://pkgs.k8s.io/core:/stable:/v$KUBERNETES_VERSION_SHORT/deb/Release.key | sudo gpg --dearmor -o /etc/apt/keyrings/kubernetes-apt-keyring.gpg
-echo "deb [signed-by=/etc/apt/keyrings/kubernetes-apt-keyring.gpg] https://pkgs.k8s.io/core:/stable:/v$KUBERNETES_VERSION_SHORT/deb/ /" | sudo tee /etc/apt/sources.list.d/kubernetes.list
+DOWNLOAD_DIR="/usr/local/bin"
+sudo mkdir -p "${DOWNLOAD_DIR}"
 
-sudo apt-get update -y
-sudo apt-get install -y kubelet="$KUBERNETES_VERSION" kubectl="$KUBERNETES_VERSION" kubeadm="$KUBERNETES_VERSION"
-sudo apt-get update -y
-sudo apt-get install -y jq
+sudo curl -L --remote-name-all https://dl.k8s.io/${KUBERNETES_VERSION}/bin/linux/${ARCH}/{kubeadm,kubelet,kubectl}
+sudo chmod +x {kubeadm,kubelet,kubectl}
+sudo mv {kubeadm,kubelet,kubectl} ${DOWNLOAD_DIR}
 
-# Disable auto-update services
-sudo apt-mark hold kubelet kubectl kubeadm cri-o
+curl -sSL "https://raw.githubusercontent.com/kubernetes/release/${KUBELET_SERVICE_VERSION}/cmd/krel/templates/latest/kubelet/kubelet.service" | sed "s:/usr/bin:${DOWNLOAD_DIR}:g" | sudo tee /usr/lib/systemd/system/kubelet.service
+sudo systemctl enable --now kubelet
+
+sudo mkdir -p /usr/lib/systemd/system/kubelet.service.d
+curl -sSL "https://raw.githubusercontent.com/kubernetes/release/${KUBEADM_CONF_VERSION}/cmd/krel/templates/latest/kubeadm/10-kubeadm.conf" | sed "s:/usr/bin:${DOWNLOAD_DIR}:g" | sudo tee /usr/lib/systemd/system/kubelet.service.d/10-kubeadm.conf
 
 local_ip="$(ip --json a s | jq -r '.[] | if .ifname == "eth1" then .addr_info[] | if .family == "inet" then .local else empty end else empty end')"
 cat > /etc/default/kubelet << EOF

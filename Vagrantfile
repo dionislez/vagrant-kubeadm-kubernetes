@@ -19,11 +19,7 @@ Vagrant.configure("2") do |config|
       done
   SHELL
 
-  if `uname -m`.strip == "aarch64"
-    config.vm.box = settings["software"]["box"] + "-arm64"
-  else
-    config.vm.box = settings["software"]["box"]
-  end
+  config.vm.box = settings["software"]["box"]
   config.vm.box_check_update = false
 
   config.vm.define "controlplane" do |controlplane|
@@ -46,7 +42,9 @@ Vagrant.configure("2") do |config|
         "DNS_SERVERS" => settings["network"]["dns_servers"].join(" "),
         "ENVIRONMENT" => settings["environment"],
         "KUBERNETES_VERSION" => settings["software"]["kubernetes"],
-        "KUBERNETES_VERSION_SHORT" => settings["software"]["kubernetes"][0..3],
+        "KUBELET_SERVICE_VERSION" => settings["software"]["kubelet_service"],
+        "KUBEADM_CONF_VERSION" => settings["software"]["kubeadm_conf"],
+        "ARCH" => settings["software"]["arch"],
         "OS" => settings["software"]["os"]
       },
       path: "scripts/common.sh"
@@ -82,7 +80,9 @@ Vagrant.configure("2") do |config|
           "DNS_SERVERS" => settings["network"]["dns_servers"].join(" "),
           "ENVIRONMENT" => settings["environment"],
           "KUBERNETES_VERSION" => settings["software"]["kubernetes"],
-          "KUBERNETES_VERSION_SHORT" => settings["software"]["kubernetes"][0..3],
+          "KUBELET_SERVICE_VERSION" => settings["software"]["kubelet_service"],
+          "KUBEADM_CONF_VERSION" => settings["software"]["kubeadm_conf"],
+          "ARCH" => settings["software"]["arch"],
           "OS" => settings["software"]["os"]
         },
         path: "scripts/common.sh"

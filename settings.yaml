@@ -31,9 +31,14 @@ nodes:
 #     vm_path: /vagrant/packages
 software:
   box: bento/ubuntu-24.04
-  calico: 3.26.0
+
+  calico: v3.31.4
   # To skip the dashboard installation, set its version to an empty value or comment it out:
-  dashboard: 2.7.0
-  kubernetes: 1.31.0-*
+  # dashboard: v2.7.0
+  kubernetes: v1.35.2
+
+  kubelet_service: v0.16.2
+  kubeadm_conf: v0.16.2
 
   os: xUbuntu_24.04
+  arch: amd64
