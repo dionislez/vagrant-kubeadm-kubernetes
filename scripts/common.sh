@@ -46,7 +46,7 @@ sudo sysctl --system
 ## Install CRIO Runtime
 
 sudo apt-get update -y
-apt-get install -y software-properties-common curl apt-transport-https ca-certificates jq
+apt-get install -y software-properties-common curl apt-transport-https ca-certificates jq podman
 
 curl https://raw.githubusercontent.com/cri-o/packaging/main/get | bash
 sudo systemctl daemon-reload
