@@ -24,7 +24,12 @@ Vagrant.configure("2") do |config|
 
   config.vm.define "controlplane" do |controlplane|
     controlplane.vm.hostname = "controlplane"
+
     controlplane.vm.network "private_network", ip: settings["network"]["control_ip"]
+    controlplane.vm.network "forwarded_port",
+      guest: settings["network"]["port_headlamp_guest"],
+      host: settings["network"]["port_headlamp_host"]
+
     if settings["shared_folders"]
       settings["shared_folders"].each do |shared_folder|
         controlplane.vm.synced_folder shared_folder["host_path"], shared_folder["vm_path"]
@@ -62,7 +67,9 @@ Vagrant.configure("2") do |config|
 
     config.vm.define "node0#{i}" do |node|
       node.vm.hostname = "node0#{i}"
+
       node.vm.network "private_network", ip: IP_NW + "#{IP_START + i}"
+
       if settings["shared_folders"]
         settings["shared_folders"].each do |shared_folder|
           node.vm.synced_folder shared_folder["host_path"], shared_folder["vm_path"]
@@ -87,12 +94,6 @@ Vagrant.configure("2") do |config|
         },
         path: "scripts/common.sh"
       node.vm.provision "shell", path: "scripts/node.sh"
-
-      # Only install the dashboard after provisioning the last worker (and when enabled).
-      if i == NUM_WORKER_NODES and settings["software"]["dashboard"] and settings["software"]["dashboard"] != ""
-        node.vm.provision "shell", path: "scripts/dashboard.sh"
-      end
     end
-
   end
 end 

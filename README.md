@@ -7,63 +7,9 @@ A fully automated setup for CKA, CKAD, and CKS practice labs is tested on the fo
 - Ubuntu Desktop
 - Mac Intel-based systems
 
-If you are MAC Silicon user, Please use the following repo.
-
-- [Vagrant Kubeadm Setup on MAC Silicon](https://github.com/techiescamp/vagrant-kubeadm-mac-silicon)
-
-## Kubernetes Certification Voucher (UpTo 50% OFF) 🎉
-
-If you are learning Kubernetes and preparing for Kubernetes certifications, these voucher codes will help you save money on your certification registration.
-
-CKA, CKAD, CKS, KCNA etc.. aspirants can **save 35%** today
-
-> [!IMPORTANT]
-> Use code **LUNAR26CT** at https://kube.promo/devops. It is a limited-time offer from the Linux Foundation.
-
-The following are the best bundles to **save 50%** with code **LUNAR26BUNCT**
-
-- CKA + CKAD: [kube.promo/cka-ckad](https://kube.promo/cka-ckad)
-- CKA + CKS Bundle: [kube.promo/bundle](https://kube.promo/bundle)
-- CKA + CKAD + CKS Exam bundle: [kube.promo/k8s-bundle](https://kube.promo/k8s-bundle)
-- KCNA + KCSA + CKA + CKAD + CKS: [kube.promo/kubestronaut](https://kube.promo/kubestronaut)
-- KCNA + CKA: [kube.promo/kcka-bundle](https://kube.promo/kcna-cka)
-- KCSA + CKS Exam Bundle: [kube.promo/kcsa-cks](https://kube.promo/kcsa-cks)
-- KCNA + KCSA Exam Bundle: [kube.promo/kcna-kcsa](https://kube.promo/kcna-kcsa)
-
-> [!NOTE]
->⌛ Act fast—this limited-time offer won’t be around much longer!
-> You have one year of validity to appear for the certification exam after registration
-
-## Organized Kubernetes & CKA Learning
-
-If you Looking for an organized way to learn Kubernetes and prepare for the CKA exam with practice questions? 
-
-> Check out our [Complete CKA Certification Course](https://courses.devopscube.com/p/cka-complete-prep-course-practice-tests). 
-
-It includes illustrations, hands-on exercises, real-world examples, and dedicated Discord support. 
-
-> [!NOTE]
->⌛ For a lmited time, use code **DCUBE30** to get 30% OFF today!
-
 ## Setup Prerequisites
 
 - A working Vagrant setup using Vagrant + VirtualBox
-
-Here is the high level workflow.
-
-
-<p align="center">
-  <img src="https://github.com/user-attachments/assets/cc5594b5-42c2-4c56-be21-6441f849f537" width="65%" />
-</p>
-
-## Documentation
-
-Current k8s version for CKA, CKAD, and CKS exam: 1.30
-
-The setup is updated with 1.31 cluster version.
-
-Refer to this link for documentation full: https://devopscube.com/kubernetes-cluster-vagrant/
-
 
 ## Prerequisites
 
@@ -108,32 +54,6 @@ or you can copy the config file to .kube directory.
 
 ```shell
 cp config ~/.kube/
-```
-
-## Install Kubernetes Dashboard
-
-The dashboard is automatically installed by default, but it can be skipped by commenting out the dashboard version in _settings.yaml_ before running `vagrant up`.
-
-If you skip the dashboard installation, you can deploy it later by enabling it in _settings.yaml_ and running the following:
-```shell
-vagrant ssh -c "/vagrant/scripts/dashboard.sh" controlplane
-```
-
-## Kubernetes Dashboard Access
-
-To get the login token, copy it from _config/token_ or run the following command:
-```shell
-kubectl -n kubernetes-dashboard get secret/admin-user -o go-template="{{.data.token | base64decode}}"
-```
-
-Make the dashboard accessible:
-```shell
-kubectl proxy
-```
-
-Open the site in your browser:
-```shell
-http://localhost:8001/api/v1/namespaces/kubernetes-dashboard/services/https:kubernetes-dashboard:/proxy/#/login
 ```
 
 ## To shutdown the cluster,

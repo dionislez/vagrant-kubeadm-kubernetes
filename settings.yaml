@@ -16,6 +16,9 @@ network:
     - 1.1.1.1
   pod_cidr: 172.16.1.0/16
   service_cidr: 172.17.1.0/18
+
+  port_headlamp_guest: 8080
+  port_headlamp_host: 8080
 nodes:
   control:
     cpu: 2
@@ -33,8 +36,6 @@ software:
   box: bento/ubuntu-24.04
 
   calico: v3.31.4
-  # To skip the dashboard installation, set its version to an empty value or comment it out:
-  # dashboard: v2.7.0
   kubernetes: v1.35.2
 
   kubelet_service: v0.16.2
