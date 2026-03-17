@@ -1,0 +1,60 @@
+---
+apiVersion: apps/v1
+kind: DaemonSet
+metadata:
+  name: test-ds
+  labels:
+    app.kubernetes.io/name: test-ds
+    app.kubernetes.io/instance: test-ds
+    app.kubernetes.io/version: v0.0.1
+spec:
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: test-ds
+      app.kubernetes.io/instance: test-ds
+      app.kubernetes.io/version: v0.0.1
+  template:
+    metadata:
+      name: test-ds
+      labels:
+        app.kubernetes.io/name: test-ds
+        app.kubernetes.io/instance: test-ds
+        app.kubernetes.io/version: v0.0.1
+    spec:
+      tolerations:
+        -
+          key: node-role.kubernetes.io/control-plane
+          operator: Exists
+          effect: NoSchedule
+      nodeSelector:
+        special: ds-only
+      containers:
+        -
+          name: whoami
+          image: traefik/whoami
+          ports:
+            -
+              containerPort: 80
+              protocol: TCP
+              name: http
+          resources:
+            limits:
+              cpu: 100m
+              memory: 100Mi
+            requests:
+              cpu: 100m
+              memory: 100Mi
+          livenessProbe:
+            httpGet:
+              path: /
+              port: http
+              scheme: HTTP
+            initialDelaySeconds: 5
+            periodSeconds: 10
+          readinessProbe:
+            httpGet:
+              path: /
+              port: http
+              scheme: HTTP
+            initialDelaySeconds: 5
+            periodSeconds: 10
