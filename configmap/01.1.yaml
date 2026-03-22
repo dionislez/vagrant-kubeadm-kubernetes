@@ -1,0 +1,68 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: test
+  labels:
+    app.kubernetes.io/name: test
+    app.kubernetes.io/instance: test
+    app.kubernetes.io/version: v0.0.1
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: test
+      app.kubernetes.io/instance: test
+      app.kubernetes.io/version: v0.0.1
+  template:
+    metadata:
+      name: test
+      labels:
+        app.kubernetes.io/name: test
+        app.kubernetes.io/instance: test
+        app.kubernetes.io/version: v0.0.1
+    spec:
+      containers:
+        -
+          name: test-busybox1
+          image: busybox
+          imagePullPolicy: Never
+          command:
+            - sh
+            - -c
+            - 'tail -f /dev/null'
+          resources:
+            requests:
+              cpu: 250m
+              memory: 256Mi
+            limits:
+              cpu: 250m
+              memory: 256Mi
+          env:
+            -
+              name: NGA11
+              value: PULL-THE-TRIGGER
+            -
+              name: NGA12
+              value: PULL-THE-TRIGGER
+        -
+          name: test-busybox2
+          image: busybox
+          imagePullPolicy: Never
+          command:
+            - sh
+            - -c
+            - 'tail -f /dev/null'
+          resources:
+            requests:
+              cpu: 250m
+              memory: 256Mi
+            limits:
+              cpu: 250m
+              memory: 256Mi
+          env:
+            -
+              name: NGA21
+              value: PULL-THE-TRIGGER
+            -
+              name: NGA22
+              value: PULL-THE-TRIGGER

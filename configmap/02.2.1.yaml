@@ -1,0 +1,21 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: test
+  labels:
+    app.kubernetes.io/name: test
+    app.kubernetes.io/instance: test
+    app.kubernetes.io/version: v0.0.1
+immutable: false
+data:
+  file1: |
+    NGA11
+    pull
+    the
+    trigger
+    changed ?
+  file2: |
+    NGA21
+    pull
+    the
+    trigger
